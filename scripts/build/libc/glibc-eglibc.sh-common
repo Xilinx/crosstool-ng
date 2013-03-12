@@ -324,6 +324,11 @@ do_libc_backend_once() {
     esac
     glibc_cflags+=" ${CT_TARGET_CFLAGS} ${OPTIMIZE} ${CT_LIBC_GLIBC_EXTRA_CFLAGS}"
 
+    if [ "${CT_LIBC_DEBUG_SYMBOLS}" = "y" ]; then
+           CT_DoLog DEBUG "Building libc with debug symbols"
+           glibc_cflags+=" -g -O0"
+    fi
+
     # ./configure is mislead by our tools override wrapper for bash
     # so just tell it where the real bash is _on_the_target_!
     # Notes:
