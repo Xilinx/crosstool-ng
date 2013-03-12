@@ -200,6 +200,11 @@ do_binutils_backend() {
 
     [ "${CT_TOOLCHAIN_ENABLE_NLS}" != "y" ] && extra_config+=("--disable-nls")
 
+    if [ "${CT_BINUTILS_DEBUG_SYMBOLS}" = "y" ]; then
+        CT_DoLog DEBUG "Building binutils with debug symbols"
+        cflags+=" -g -O0"
+    fi
+
     CT_DoLog DEBUG "Extra config passed: '${extra_config[*]}'"
 
     CT_DoExecLog CFG                                            \
@@ -341,6 +346,11 @@ do_binutils_for_target() {
         fi
 
         [ "${CT_TOOLCHAIN_ENABLE_NLS}" != "y" ] && extra_config+=("--disable-nls")
+
+        if [ "${CT_BINUTILS_DEBUG_SYMBOLS}" = "y" ]; then
+            CT_DoLog DEBUG "Building binutils with debug symbols"
+            cflags+=" -g -O0"
+        fi
 
         CT_DoExecLog CFG                                            \
         "${CT_SRC_DIR}/binutils-${CT_BINUTILS_VERSION}/configure"   \
