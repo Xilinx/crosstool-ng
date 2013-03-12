@@ -19,10 +19,15 @@ do_libc_get() {
     addons_list=($(do_libc_add_ons_list " "))
 
     # Main source
-    CT_GetFile "glibc-${CT_LIBC_VERSION}"               \
-               {ftp,http}://ftp.gnu.org/gnu/glibc       \
-               ftp://gcc.gnu.org/pub/glibc/releases     \
-               ftp://gcc.gnu.org/pub/glibc/snapshots
+    if [ "${CT_LIBC_CUSTOM}" = "y" ]; then
+        CT_GetCustom "glibc" "${CT_LIBC_VERSION}" "${CT_LIBC_CUSTOM_LOCATION}"
+        CT_LIBC_CUSTOM_LOCATION="${CT_SRC_DIR}/glibc-${CT_LIBC_VERSION}"
+    else
+        CT_GetFile "glibc-${CT_LIBC_VERSION}"               \
+                   {ftp,http}://ftp.gnu.org/gnu/glibc       \
+                   ftp://gcc.gnu.org/pub/glibc/releases     \
+                   ftp://gcc.gnu.org/pub/glibc/snapshots
+    fi
 
     # C library addons
     for addon in "${addons_list[@]}"; do
@@ -30,6 +35,9 @@ do_libc_get() {
         # they've always been internal
         case "${addon}" in
             nptl)   continue;;
+            *)      if [ "${CT_LIBC_CUSTOM}" = "y" ]; then
+                        continue
+                    fi;;
         esac
 
         if ! CT_GetFile "glibc-${addon}-${CT_LIBC_VERSION}"     \
