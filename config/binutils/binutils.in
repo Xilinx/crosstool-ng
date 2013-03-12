@@ -64,6 +64,13 @@ config BINUTILS_CUSTOM_LOCATION
 
 endif # BINUTILS_CUSTOM
 
+config BINUTILS_DEBUG_SYMBOLS
+    bool
+    prompt "Build binutils with debug symbol info"
+    default n
+    help
+      Build binutils with debug symbol info
+
 config BINUTILS_VERSION
     string
 # Don't remove next line
