@@ -377,6 +377,13 @@ config CC_GCC_USE_LIBELF
 config CC_GCC_HAS_LIBQUADMATH
     bool
 
+config CC_DEBUG_SYMBOLS
+    bool
+    prompt "Build compiler with debug symbol info"
+    default n
+    help
+      Build gcc with debug symbol info
+
 config CC_VERSION
     string
 # Don't remove next line
