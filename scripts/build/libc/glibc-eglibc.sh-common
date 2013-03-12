@@ -83,6 +83,7 @@ do_libc_backend() {
     local multi_dir
     local multi_flags
     local extra_dir
+    local flat_dir
     local libc_headers libc_startfiles libc_full
     local hdr
     local arg
@@ -118,10 +119,11 @@ do_libc_backend() {
             extra_flags="$( echo "${multilib#*;}"       \
                             |${sed} -r -e 's/@/ -/g;'   \
                           )"
-            extra_dir="/${multi_dir}"
+            flat_dir="libc_${multi_dir//\//_}"
+            extra_dir="/${flat_dir}"
 
-            # glibc install its files in ${extra_dir}/{usr/,}lib
-            # while gcc expects them in {,usr/}lib/${extra_dir}.
+            # glibc install its files in /${flat_dir}/{usr/,}lib
+            # while gcc expects them in {,usr/}lib/${multi_dir}.
             # Prepare some symlinks so glibc installs in fact in
             # the proper place
             # We do it in the start-files step, so it is not needed
@@ -131,10 +133,10 @@ do_libc_backend() {
                 CT_Pushd "${CT_SYSROOT_DIR}"
                 CT_DoExecLog ALL mkdir -p "lib/${multi_dir}"        \
                                           "usr/lib/${multi_dir}"    \
-                                          "${multi_dir}"            \
-                                          "${multi_dir}/usr"
-                CT_DoExecLog ALL ln -sf "../lib/${multi_dir}" "${multi_dir}/lib"
-                CT_DoExecLog ALL ln -sf "../../usr/lib/${multi_dir}" "${multi_dir}/usr/lib"
+                                          "${flat_dir}"            \
+                                          "${flat_dir}/usr"
+                CT_DoExecLog ALL ln -sf "../lib/${multi_dir}" "${flat_dir}/lib"
+                CT_DoExecLog ALL ln -sf "../../usr/lib/${multi_dir}" "${flat_dir}/usr/lib"
                 CT_Popd
             fi
             libc_headers=
@@ -170,8 +172,8 @@ do_libc_backend() {
                         fi
                     done
                 done
-                # Remove the multi_dir now it is no longer useful
-                CT_DoExecLog DEBUG rm -rf "${CT_SYSROOT_DIR}/${multi_dir}"
+                # Remove the flat_dir now it is no longer useful
+                CT_DoExecLog DEBUG rm -rf "${CT_SYSROOT_DIR}/${flat_dir}"
             fi # libc_mode == final
 
             CT_EndStep
