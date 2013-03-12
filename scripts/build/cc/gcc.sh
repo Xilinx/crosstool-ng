@@ -353,6 +353,12 @@ do_cc_core_backend() {
         extra_config+=("--disable-multilib")
     fi
 
+    if [ "${CT_CC_DEBUG_SYMBOLS}" = "y" ]; then
+        CT_DoLog DEBUG "Building gcc with debug symbols"
+        cflags+=" -g -O0"
+        extra_config+=("--enable-checking")
+    fi
+
     CT_DoLog DEBUG "Extra config passed: '${extra_config[*]}'"
 
     # Use --with-local-prefix so older gccs don't look in /usr/local (http://gcc.gnu.org/PR10532)
@@ -781,6 +787,12 @@ do_cc_backend() {
         extra_config+=("--enable-multilib")
     else
         extra_config+=("--disable-multilib")
+    fi
+
+    if [ "${CT_CC_DEBUG_SYMBOLS}" = "y" ]; then
+        CT_DoLog DEBUG "Building gcc with debug symbols"
+        cflags+=" -g -O0"
+        extra_config+=("--enable-checking")
     fi
 
     CT_DoLog DEBUG "Extra config passed: '${extra_config[*]}'"
