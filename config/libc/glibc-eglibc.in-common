@@ -113,6 +113,13 @@ config LIBC_GLIBC_FORCE_UNWIND
       of glibc (and possibly eglibc as well) on some architectures
       (seen on s390, s390x and x86_64).
 
+config LIBC_DEBUG_SYMBOLS
+    bool
+    prompt "Build with debug symbol info"
+    default n
+    help
+      Build libc with debug symbol info
+
 config LIBC_GLIBC_USE_PORTS
     bool
     prompt "Use the ports addon"
