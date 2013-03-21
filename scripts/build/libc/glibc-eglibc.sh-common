@@ -203,6 +203,7 @@ do_libc_backend_once() {
     local -a extra_make_args
     local glibc_cflags
     local float_extra
+    local endian_multilib
     local endian_extra
     local arg
 
@@ -297,10 +298,12 @@ do_libc_backend_once() {
                    )"
     case "${endian_extra}" in
         EB|mbig-endian|mbig|meb|mb)
-            extra_cc_args="${extra_cc_args} ${endian_extra}"
+            endian_multilib="-${endian_extra}"
+            extra_cc_args="${extra_cc_args} ${endian_multilib}"
             ;;
         EL|mlittle-endian|mlittle|mel|ml)
-            extra_cc_args="${extra_cc_args} ${endian_extra}"
+            endian_multilib="-${endian_extra}"
+            extra_cc_args="${extra_cc_args} ${endian_multilib}"
             ;;
         "") extra_cc_args="${extra_cc_args} ${CT_ARCH_ENDIAN_OPT}"
             ;;
@@ -455,6 +458,7 @@ do_libc_backend_once() {
             CT_DoExecLog ALL "${cross_cc}" -nostdlib        \
                                            -nostartfiles    \
                                            -shared          \
+                                           ${endian_multilib} \
                                            -x c /dev/null   \
                                            -o "${CT_SYSROOT_DIR}${extra_dir}/usr/lib/libc.so"
         fi # threads == nptl
