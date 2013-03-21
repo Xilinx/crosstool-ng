@@ -803,7 +803,6 @@ do_cc_backend() {
     LDFLAGS="${final_LDFLAGS[*]}"                   \
     CFLAGS_FOR_TARGET="${CT_TARGET_CFLAGS}"         \
     CXXFLAGS_FOR_TARGET="${CT_TARGET_CFLAGS}"       \
-    LDFLAGS_FOR_TARGET="${CT_TARGET_LDFLAGS}"       \
     "${CT_SRC_DIR}/gcc-${CT_CC_VERSION}/configure"  \
         --build=${CT_BUILD}                         \
         --host=${host}                              \
