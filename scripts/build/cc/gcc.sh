@@ -405,16 +405,15 @@ do_cc_core_backend() {
             CT_DoExecLog ALL make ${JOBSFLAGS} all-libcpp all-build-libiberty
         fi
 
-        # HACK: gcc-4.8 uses libbacktrace, so build it here.
-        if [ -d "${CT_SRC_DIR}/gcc-${CT_CC_VERSION}/libbacktrace" ]; then
-            CT_DoExecLog CFG make ${JOBSFLAGS} configure-libbacktrace
-            CT_DoExecLog ALL make ${JOBSFLAGS} -C libbacktrace all
-        fi
-
         # HACK: gcc-4.2 uses libdecnumber to build libgcc.mk, so build it here.
         if [ -d "${CT_SRC_DIR}/gcc-${CT_CC_VERSION}/libdecnumber" ]; then
             CT_DoExecLog CFG make ${JOBSFLAGS} configure-libdecnumber
             CT_DoExecLog ALL make ${JOBSFLAGS} -C libdecnumber libdecnumber.a
+        fi
+        # HACK: gcc-4.8 uses libbacktrace to make libgcc.mvars, so make it here.
+        if [ -d "${CT_SRC_DIR}/gcc-${CT_CC_VERSION}/libbacktrace" ]; then
+            CT_DoExecLog CFG make ${JOBSFLAGS} configure-libbacktrace
+            CT_DoExecLog ALL make ${JOBSFLAGS} -C libbacktrace
         fi
 
         # Starting with GCC 4.3, libgcc.mk is no longer built,
@@ -434,6 +433,7 @@ do_cc_core_backend() {
         # configurations.
         if [ "${CT_BARE_METAL},${CT_CANADIAN}" = "y,y" ]; then
             repair_cc="CC_FOR_BUILD=${CT_BUILD}-gcc \
+                       CXX_FOR_BUILD=${CT_BUILD}-g++ \
                        GCC_FOR_TARGET=${CT_TARGET}-gcc"
         else
             repair_cc=""

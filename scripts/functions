@@ -414,6 +414,7 @@ CT_EndStep() {
 
 # Pushes into a directory, and pops back
 CT_Pushd() {
+    CT_DoLog DEBUG "Entering '$1'"
     pushd "$1" >/dev/null 2>&1
 }
 CT_Popd() {
@@ -523,6 +524,7 @@ CT_DoListTarballExt() {
     printf ".tar.bz2\n"
     printf ".tar.gz\n.tgz\n"
     printf ".tar\n"
+    printf ".zip\n"
 }
 
 # Get the file name extension of a component
@@ -638,6 +640,7 @@ CT_GetCustom() {
         # so we can create a properly-named symlink, which
         # we use later on in 'extract'
         case "${custom_location}" in
+            *.tar.xz)       custom_name="${custom_name}.tar.xz";;
             *.tar.bz2)      custom_name="${custom_name}.tar.bz2";;
             *.tar.gz|*.tgz) custom_name="${custom_name}.tar.gz";;
             *.tar)          custom_name="${custom_name}.tar";;
@@ -861,7 +864,7 @@ CT_GetGit() {
 # by the caller, that did a 'cd' into the correct path before calling us
 # and sets nochdir to 'nochdir'.
 # Note also that this function handles the git trees!
-# Usage: CT_Extract <basename> [nochdir] [options]
+# Usage: CT_Extract [nochdir] <basename> [options]
 # where 'options' are dependent on the source (eg. git branch/tag...)
 CT_Extract() {
     local nochdir="$1"
@@ -926,6 +929,7 @@ CT_Extract() {
         .tar.bz2)     bzip2 -dc "${full_file}" | CT_DoExecLog FILE tar "${tar_opts[@]}" -f -;;
         .tar.gz|.tgz) gzip -dc "${full_file}" | CT_DoExecLog FILE tar "${tar_opts[@]}" -f -;;
         .tar)         CT_DoExecLog FILE tar "${tar_opts[@]}" -f "${full_file}";;
+        .zip)         CT_DoExecLog FILE unzip "${@}" "${full_file}";;
         /.git)        CT_ExtractGit "${basename}" "${@}";;
         *)            CT_DoLog WARN "Don't know how to handle '${basename}${ext}': unknown extension"
                       return 1
